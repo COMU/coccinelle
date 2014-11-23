@@ -1,0 +1,11 @@
+10 Sabitler, Tanımlayıcılar ve Dönüşümler için Tipleri
+
+	const  ::= string 
+		 | [0-9]+
+		 | ···
+	string ::= "[ˆ"] ∗ "
+	id     ::= id | metaid Id | OR(stmt)
+	typedef_ident ::= id | metaid Type
+	type   ::= ctype | metaid Type
+	pathToIsoFile ::= <.*>
+	regexp  ::= "[ˆ"] ∗ "
