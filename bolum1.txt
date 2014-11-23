@@ -1,0 +1,17 @@
+        Bu belge Coccinelle aracında kullanılan SMPL dilinin gramerini sunmaktadır. Gramer standart gösterim kullanılarak yazılmıştır. Bazı kurallar sol tarafta büyük harflerle yazılmıştır. Bunlar sağ tarafta bir veya birden fazla gramer kuralı veya argümanı olan makrolardır. Gramer id,const gibi belirsiz nontermaller kullanıyor. Bunlar adlarından da anlaşılacağı gibi id C dilindeki identifier(tanımlama) const C dilindeki constant(sabit) ' temsil ediyor.
+        Bir terimin açıklamasında boş bir köşeli parantez o terimin bir diziyi temsil ettiği anlamına gelir. Diğer yandan o terim köşei parantezler çindeyse bu o terimin isteğe bağlı var olduğu anlamına gelir.
+
+                                                1 Program
+
+program ::= include_cocci* changeset
+include_cocci ::= include string
+                | using string
+                | using pathToIsoFile
+                | virtual id (, id )*
+changeset ::= metavariables transformation
+                | script_metavariables script_code
+
+        script_code kod içinden seçilmiş herhangi bir script dilidir. Anlamsal yama çözümlemesi bu kodun doğruluğunu test etmez, herhangi bir hata varsa kod çalıştırıldığında tespit edilebilir. @ işareti bu kod içinde kullanılmamalıdır. Spatch kod içinde @ görse bile bir sonraki @ işretini tarar ve bunu sonraki kuralın başlangıcı olarak görür.
+
+        virtual anahtar kelimesi ise sanal kuralları tanımlamak için kullanılır. Sanal kurallar kurallari içerem SMPL dosyası için sonradan kullanılabilecek bağımlılıklar olabilir. Sanal kural olsun ya da olmasın  komut satırında -D seçeneğiyle kontrol edilebilir.
+

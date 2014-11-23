@@ -1,0 +1,76 @@
+4-Dönüşümler
+Dönüşüm özelliklerinin esas C kodu formu vardır,ilk sütunda sildiğin satırların açıklamasını "-" ile birlikte, eklediğin satırların açıklamasını "+" ile birlikte kullan. Bu dönüşüm özelliklerinde, nokta  kullanabilirsiniz. “...”, üç nokta  rasgele dizi işlev bağımsız değişkenleri veya yönergeler içindeki bir denetim akış yolunu tarif ediyor. Dolayısıyla üç nokta ("...") üç noktadan sonra eşleşen bazı modellerle üç noktadan önce eşleşen bazı modeller arasındaki kısa yoldur.
+Noktalar, eşleşen dizisi içinde bir yerde ortaya çıkmaz, bir model gösteren bir when madde ile modifiye edilebilir."when any","..." kısa yolu ile eşleştiğinde anılan kısıtlamaları kaldırır. Son olarak bir dönüşüm formu deseni, bir ayırım belirtebilirsiniz.
+( pat 1 | . . . | pat n ) (| , or) sütununda 0 ya da \ öncesinde.SMPL kod aslında gramer değildir, dilbilgisi dönüşümü için sunuluyor,aslında programcı tarafından yazılmış olabilir. Ancak bunun yerine oluşan bu dilim dilbilgisi "-" açıklamalı ve açıklama içermeyen kodu veya "+" açıklamalı kodu ve açıklama içermeyen kodudur.
+
+Örneğin,ayrıştırma amacıyla, aşağıdaki dönüştürmede gösterilen model, iki model halinde bölünür ve her biri ayrı olarak çözümlenir :
+
+		         	 	1 proc_info_func(...) {
+		          		2	<...
+				  	3 - hostno
+				  	4 + hostptr->host_no
+		          		5 ...>
+		          		6	}
+	1 proc_info_func(...) {                     		1 proc_info_func(...) {
+	2 <...                                      		2 <...
+	3 - hostno                                  		3 + hostptr->host_no
+	4 ...>					    		4 ...>
+	5 }					    		5 }
+
+
+
+
+Her iki dilim de doğru ayrıştırma gerektiren kural sözdizimsel olarak geçerli C koduna uygun olmasını sağlar ve sözdizimsel olarak geçerli C kodu üretir.Oluşturulan ayrıştırma ağaçları daha sonra, sonraki uygun ve dönüştürme işleminde kullanım için birleştirilir.
+Aşağıdaki  bir dönüşümün eksi ya da artı dilim için dilbilgisi:
+
+transformation ::= include +
+		|OPTDOTSEQ(top, when)
+
+include        ::= #include include_string
+top            ::= expr
+	         | decl_stmt +
+		 | fundecl
+when 	       ::= when != when_code
+		 | when = rule_elem_stmt
+		 | when COMMA_LIST(any_strict)
+		 | when true != expr
+		 | when false != expr
+when_code      ::= OPTDOTSEQ(decl_stmt + , when)
+		 | OPTDOTSEQ(expr, when)
+rule_elem_stmt ::= one_decl
+		 | expr;
+		 | return [expr];
+		 | break;
+		 | continue;
+                 | \(rule_elem_stmt (\| rule_elem_stmt) + \)
+any_strict     ::= any
+		 | strict
+		 | forall
+		 | exists
+OPTDOTSEQ(grammar_ds, when_ds) ::=
+	[... (when_ds) ∗ ] grammar_ds (...(when_ds) ∗ grammar_ds) ∗ [...(when_ds) ∗ ]
+
+Belki bir satırı açıklamak için eleman olarak  {-,+,*} setini veya ? tekil elemanları ya da her biri kullanılabilir."?" Verilen desen en az bir eşleme temsil eder,yani desenin bir eşleşmesi isteğe bağlıdır. * anlamsal eşleşme için kullanılır, yani bir desen * birlikte açıklamalı parçaları vurgular,ancak eşleşen kod herhangi bir değişiklik yapmaz.* "-" ve "+" ile karıştırılmamalıdır.Bu açıklamaların kullanımında bazı kısıtlamalar vardır.
+• Nokta yani "..." bir çizgi işaretli + üzerinde oluşamaz.
+• İç içe noktalar, yani, nokta içine "<" ve ">", hatta herhangi bir işaretleme ile gerçekleşemez.
+
+Bir ayırmanın her elemanı bir deyim, bir tanımlayıcı veya beyan gibi uygun bir terim olmalı.Bu nedenle, aşağıda sol tarafta kuralı sözdizimsel doğru SMPL kuralı değildir.Bunun yerine sağ taraftakini kullanabilirsiniz.
+
+	1  @@					1  @@
+	2  type T;				2  type T;
+	3  T b;					3  T b;
+	4  @@					4  @@
+	5					5
+	6  (					6  (
+	7  writeb(...,				7  read
+	8  |					8  |
+	9  readb(...,				9  write
+	10 )					10 )
+	11 -(T)					11 (...,
+	12 b)					12 -(T)
+						13 b)
+
+Bazı terimlerde sadece + kod görünür.Bu yorum ,ifdefs ve attributes (__attribute__((...))) içerir.
+
+
+

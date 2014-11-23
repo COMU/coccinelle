@@ -1,0 +1,47 @@
+
+                                                2 Dönüşümler için Meta değişkenler
+
+
+        Meta değişken tanımlamasının rulename kısmı kuralın özelliklerini belirtebilir (kuralın ismi gibi). *** İşteğe bağlı bilgi notları expression  desenin bir ifadeyle eşleştiğini gösteriyor. Bu bazı ayrıştırma sorunlarını çözmek için kullanılabiliyor.
+        Meta değişken tanımının metadecl kısmı dönüşüm bölümünde eşleşmesi için meta değişkenin tipini tanımlar.
+
+****
+****
+
+        disable anahtar kelimesi standart.iso içinde yada herhangi bir yerdeki izomorfizim dosyasında izomorfizimlerin ismini tanımlar. Coccinelle uygulamasını içinde başka izomorfizmler vardır ve bu şeklide engellenirler. İsimleri aşağıda verilmiştir. Her seçenekte metim standart davranışı tanımlıyor. disable-iso verilen isimle kullanımı bu davranışarı devre dışı bırakır.
+
+
+• optional_storage : Herhangi bir görüş belirtmeyen bir SMPL fonksiyon tanımlaması (yani, static veya extern),
+ya da herhangi bir depolama belirtmeyen bir SMPL değişken tanımlaması (yani, otomatic, static, register veya extern), sırasıyla herhangi bir görüş veya depolama ile bir işlev tanımlamasıyla veya değişken tanımlasıyla eşleşir.
+
+• optional_qualifier: optional_storage ile benzerdir. Farkı buradaki niteleyiler( const, volatile ) SMPL kodu içinde olamk zorunda değildir. C kodu içinde de olabilir.
+
+• optional_attributes: optional_attributes 'e benzer. Farkı özellikler(__init) SMPL kodu içinde olmak zorunda değildir. C kodu içinde de olabilir. Ama şuan kullanılamyan bir özelliktir.
+
+• value_format: Çeşitli formatlardaki tam sayıların eşleştirilmesinde bunları eşit kabul etmektedir.
+
+• optional_declarer_semicolon: Bazı tanımlamalarda noktalı virgüle gerek yoktur Bu izomorfizim virgüllü bir SMPL tanımlanın benzer C tanımlamasıyla eşleşmesine izin verir. ***
+
+• comm_assoc: operatörünün değişme ve birleşme özelliği olan şu biçimdeki bir ifadenin (ifade binary_operator ...) herhangi bir üst seviye binary_operator içeren ifadeyle eşleşeceğini gösterir.
+
+        Meta değişeken tanımlama çeşitlerinin tümü aşağıda gramer kuralında tanımlanmıştır. *** Yeni tanımlayıcı metadeğişkenler sadece + kod içinde kullanılmalıdır. Bu özellik gramerde ifade edilmez ancak bir sonraki analizde kontrol edilir. Metadeğişkenler terimlerin çeşidine göre dizayn edilir  (statement, identifier, expression). Bir ifade meta değişkeni bu değişkenin tipine göre daha sınırlı olabilir. Bir tanımalama meta değişkeni bir ve ya daha fazla aynı tip özelliklerindeki tanımlamayla eşleşebilir. (int a,b,c=3;) ***
+
+
+
+
+
+***
+***
+local ideexpression v , v metadeğişkeninin etki alanının yerel ile sınırlı olduğu analamına gelir. Eğer metadeğişkenin local olaması gerekmiyorsa local ifadesini kaldırmamız yeterli. konumla ilgili daha karmaşık bir tanımalama yapılacaksa a->b artık bu ideexpression olarak değil expression olarak kabul edilir.
+
+constant 27 gibi sabitler için kullanılır. Ama tümü büyük harflerden oluşan ifadeler içinde kullanılabilir Çünkü linux ta makrolar sabit sayıyı temsil ediyor olabilir.
+
+identifier bir tanımlayıcı yapının (makro, fonksiyon, değişken) adıdır. Değer içeren bir ifadenin ismi
+
+expression yada parametre listesi metadeğişkeninin belirli sayıda expression ya da parametreyle eşleşebilmesini sağlamak mümkün.
+yeni tanımlayıcı(identifier) hakkında bazı bilgileri belirtmek mümkün.
+
+*** bir pozisyon metadeğişkeni @ işaretinin devamına yazılır ve başka bir metadeğişken daha içerir. Anlamı sembol ile eşleşen kod konumudur. Bu şekilde expression declaration type initializer statement  eklemek te mümkündür. ***
+
+Format yada format listesi metadeğişkeni kullanıldığında @s ... @s arasında kalmalıdır.
+
