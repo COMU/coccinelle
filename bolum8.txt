@@ -1,0 +1,48 @@
+8 Açıklamalar
+
+İlk kural bildirimi açıklamada çeşitli şekillerde anlatılmaktadır. Geri kalan kurallar, durumun oluştuğu içeriğe duyarlı olan kısıtlamaları uygular. Bir içerik için "single_statement"a sadece bir durumda izin verilir ve bu nedenle "decl_statement" için bir içeriğin bildirimi, durumu ve sıralanışına  izin verilir.    
+
+	stmt       ::= directive
+		     | metaid Stmt
+		     | expr;
+		     | if (dot_expr) single_stmt [else single_stmt]
+		     | for ([dot_expr]; [dot_expr]; [dot_expr]) single_stmt
+		     | while (dot_expr) single_stmt
+		     | do single_stmt while (dot_expr);
+		     | iter_ident (dot_expr ∗ ) single_stmt
+		     | switch ([dot_expr]) {case_line ∗ }
+		     | return [dot_expr];
+		     | { [stmt_seq] }
+		     | NEST(decl_stmt + , when)
+		     | NEST(expr, when)
+		     | break;
+		     | continue;
+		     | id:
+		     | goto id;
+		     | {stmt_seq }
+	directive  ::= include
+		     | #define id [top]
+		     | #define id (PARAMSEQ(id, ε)) [top]
+		     | #undef id
+		     | #pragma id id +
+		     | #pragma id (PARAMSEQ(expr, ε))
+		     | #pragma id ...
+	single_stmt::= stmt
+		     | OR(stmt)
+	decl_stmt  ::= metaid StmtList
+		     | decl_var
+		     | stmt
+		     | OR(stmt_seq)
+	stmt_seq   ::= decl_stmt ∗ [DOTSEQ(decl_stmt + , when) decl_stmt ∗ ]
+		     | decl_stmt ∗ [DOTSEQ(expr, when) decl_stmt ∗ ]
+	case_line  ::= default : stmt_seq
+		     | case dot_expr : stmt_seq
+	iter_ident ::= IteratorId
+		     | metaid Iterator
+
+OR(gram_o)             ::= ( gram_o (|gram_o) ∗ )
+DOTSEQ(gram_d, when_d) ::= ...[when_d] (gram_d ...[when_d]) ∗
+NEST(gram_n, when_n)   ::= <...[when_n] gram_n (...[when_n] gram_n) ∗ ...>
+                         | <+...[when_n] gram_n (...[when_n] gram_n) ∗ ...+>
+
+OR, modellerin parçalarına ayrılmasından oluşan bir makrodur. Üç sembol (, | , and ) onları parantezlerden ayırt etmek için en sol sütunda bulunmalıdır ve ifadeler içinde bulunan bit-or sembolleri en soldaki satırda bulunamaz. Bu semboller, başka bir sütunda kullanıldıkları zaman \'dan önce gelebilir. Bu semboller ayrıca, dilötesi dilbilgisinin parçası olan (, |, and )'den farklıdır.

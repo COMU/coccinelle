@@ -1,0 +1,51 @@
+5 Tipler
+
+	ctypes                    ::= COMMA_LIST(ctype)
+	ctype                     ::= [const_vol] generic_ctype * ∗
+		                    | [const_vol] void * +
+		                    | (ctype (| ctype) ∗ )
+	const_vol                 ::= const
+		                    | volatile
+	generic_ctype             ::= ctype_qualif
+			            | [ctype_qualif ] char
+			            | [ctype_qualif ] short
+			            | [ctype_qualif ] short int
+			            | [ctype_qualif ] int
+			            | [ctype_qualif ] long
+			            | [ctype_qualif ] long int
+			            | [ctype_qualif ] long long
+			            | [ctype_qualif ] long long int
+			            | double
+			            | long double
+			            | float
+			            | size_t
+		                    | ssize_t
+			            | ptrdiff_t
+			            | enum id { PARAMSEQ(dot_expr, exp_whencode) [,] }
+			            | [struct| union] id [{ struct_decl_list ∗ }]
+	ctype_qualif              ::= unsigned
+			            | signed
+	struct_decl_list          ::= struct_decl_list_start
+	struct_decl_list_start    ::= struct_decl
+				    | struct_decl struct_decl_list_start
+				    | ... [when != struct_decl] † [continue_struct_decl_list]
+	continue_struct_decl_list ::= struct_decl struct_decl_list_start
+				    | struct_decl
+	struct_decl               ::= ctype d_ident;
+				    | fn_ctype (* d_ident) (PARAMSEQ(name_opt_decl, ε));)
+				    | [const_vol] id d_ident;
+	d_ident                   ::= id [[expr]] ∗
+	fn_ctype                  ::= generic_ctype * ∗
+			            | void * ∗
+	name_opt_decl             ::= decl
+			            | ctype
+				    | fn_ctype
+
+Tercihe bağlı "when" yapısı satır sonunda biter.
+
+
+
+
+
+
+
