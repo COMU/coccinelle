@@ -1,0 +1,20 @@
+12 Komut satırı anlamasal eşleşme
+
+-sp argümanını kullanarak, spatch komut satırında anlamsal bir eşleşme belirtmek mümkündür.Böyle bir anlamsal eşleşmede,bir büyük harf ile başlayan her belirteç tipi metavariable bir meta değişken olarak kabul edilir.Bu durumda derleyici meta değişkenin ne tür olduğunu anlaması gerekir.:' içinde tipini kapsayan bir meta değişken türünü belirtmek de mümkündür, meta değişken adına doğrudan birleştirilir.
+-sp bir argüman olarak verilebilir anlamsal eşleşmelerin aşağıda ki gibi bazı örnekleri vardır:
+
+• f(e):Bu sadece f(e) ifadesi ile eşleşir.
+
+• f(E):Bu herhangi bir argüman ile f için bir çağrı ile eşleşir.
+
+• F(E):Bu derleme hatası verir,anlamsal yama derleyicisi F'in metadeğişken tür olduğunu tahmin edemez.
+
+• F:identifier:(E):Bu herhangi bir tek argüman fonksiyon çağrısı ile eşleşir.
+
+• f:identifier:(e:struct foo *:):Bu argüman tipi struct foo * olan , herhangi bir tek argümanlı fonksiyon çağrısıyla eşleşir.Sonradan metavariables tipleri belirtilen meta değişken isimleri için büyük harf ile başlamak gerekli değildir.
+
+• F:identifier:(F):Bu argümanı fonksiyonun kendisinin adı olan herhangi bir argümanlı fonksiyon çağrısı ile eşleşir.Bu örnek, meta değişken tip adını tekrar tanımlamanın gerekli olmadığını göstermektedir.
+
+• F:identifier:(F:identifier:):Bu argümanı fonksiyonun kendisinin adı olan herhangi bir argümanlı fonksiyon çağrısı ile eşleşir.Bu örnek meta değişken tip adı tekrar edilmesinin mümkün olduğunu göstermektedir.
+
+"When" kısıtlamaları , örneğin when != e , ancak "e" ifadesi bir tek belirteçle gösterilirse izin verilmektedir.Oluşturulan anlamsal eşleşme her belirteç önünde bir * operatörü varmış gibi davranır.
