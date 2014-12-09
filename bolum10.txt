@@ -1,4 +1,4 @@
-10 Sabitler, Tanımlayıcılar ve Dönüşümler için Tipleri
+10 Dönüşümler için Sabitler, Tanımlayıcılar ve Tipleri
 
 	const  ::= string 
 		 | [0-9]+
