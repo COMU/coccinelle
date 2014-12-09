@@ -1,0 +1,43 @@
+14.4 NULL referanstan ayırmayı aramak
+
+Bu SmPL eşleştirmesi NULL referanstan ayırmayı arar.Önce bir ifade NULL ile karşılaştırılır,değişken işaretçi yeniden atanmazsa bu ifadeye referans ayırmak yasaklanmıştır.
+		
+		  Orijinal
+
+1 foo = kmalloc(1024);
+2 if (!foo) {
+3   printk ("Error %s", foo->here);
+4   return;
+5 }
+6 foo->ok = 1;
+7 return;
+
+		Anlamsal Eşleşme
+
+1 @@
+2 expression E, E1;
+3 identifier f;
+4 statement S1,S2,S3;
+5 @@
+6
+7 * if (E == NULL)
+8 {
+9 ... when != if (E == NULL) S1 else S2
+10    when != E = E1
+11 * E->f
+12 ... when any
+13 return ...;
+14 }
+15 else S3
+
+	      Eşleşmiş Satırlar
+
+1 foo = kmalloc(1024);
+2 if (!foo) {
+3   printk ("Error %s", foo->here);
+4   return;
+5 }
+6 foo->ok = 1;
+7 return;
+
+
