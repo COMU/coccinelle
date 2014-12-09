@@ -1,0 +1,26 @@
+\documentclass[a4paper,22pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\begin{document}
+\textbf{12 Komut satırı anlamsal eşleşme}\\
+\\
+\texttt{-sp} argümanını kullanarak, spatch komut satırında anlamsal bir eşleşme belirtmek mümkündür.Böyle bir anlamsal eşleşmede,bir büyük harf ile başlayan her belirteç tipi \texttt{metavariable} bir meta değişken olarak kabul edilir.Bu durumda derleyici meta değişkenin ne tür olduğunu anlaması gerekir.:' içinde tipini kapsayan bir meta değişken türünü belirtmek de mümkündür, meta değişken adına doğrudan birleştirilir.
+\\\texttt{-sp} bir argüman olarak verilebilir anlamsal eşleşmelerin aşağıda ki gibi bazı örnekleri vardır:
+\flushleft
+\begin{itemize}
+\item \texttt{f(e):} Bu sadece \texttt{f(e)} ifadesi ile eşleşir.
+\item \texttt{f(E):} Bu herhangi bir argüman ile f için bir çağrı ile eşleşir.
+\item \texttt{F(E):}Bu derleme hatası verir,anlamsal yama derleyicisi \texttt{F}'in metadeğişken tür olduğunu tahmin edemez.
+\item \texttt{F:identifier:(E):}Bu herhangi bir tek argüman fonksiyon çağrısı ile eşleşir.
+\item  \texttt{f:identifier:(e:struct foo *:):}Bu argüman tipi \texttt{struct foo *} olan , herhangi bir tek argümanlı fonksiyon çağrısıyla eşleşir.Sonradan metavariables tipleri belirtilen meta değişken isimleri için büyük harf ile başlamak gerekli değildir.
+\item \texttt{F:identifier:(F):}Bu argümanı fonksiyonun kendisinin adı olan herhangi bir argümanlı fonksiyon çağrısı ile eşleşir.Bu örnek, meta değişken tip adını tekrar tanımlamanın gerekli olmadığını göstermektedir.
+\item \texttt{F:identifier:(F:identifier:):}Bu argümanı fonksiyonun kendisinin adı olan herhangi bir argümanlı fonksiyon çağrısı ile eşleşir.Bu örnek meta değişken tip adı tekrar edilmesinin mümkün olduğunu göstermektedir.
+\end{itemize}
+\flushleft
+\texttt{When} kısıtlamaları , örneğin \texttt{when != e} , ancak \texttt{e} ifadesi bir tek belirteçle gösterilirse izin verilmektedir.Oluşturulan anlamsal eşleşme her belirteç önünde bir * operatörü varmış gibi davranır.
+
+
+
+
+
+\end{document}
