@@ -1,0 +1,51 @@
+\documentclass[22pt]{article}
+\usepackage[turkish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{url}
+
+\begin{document}
+14.2 Fonksiyon Argümanı Kaldırmak\\
+\\
+Bir başka önemli değişim çeşidi fonksiyon argümanı giriş ve silme işlemleridir. Aşağıdaki örnekte, rule1 kuralında dönüş tipi ve 2 parametresi olan bir fonksiyon tanımlanmış. İkinci isimsiz kural üç argümana sahip önceden eşleşmiş olan fonksiyonu çağırır. Sonrasında üçüncü argüman yeni fonksiyon prototipine uyması için kaldırılır.\\
+\\
+
+\begin{lstlisting}
+@ rule1 @
+identifier fn;
+identifier irq, dev_id;
+typedef irqreturn_t;
+@@
+static irqreturn_t fn (int irq, void *dev_id)
+{
+...
+}
+@@
+identifier rule1.fn;
+expression E1, E2, E3;
+@@
+fn(E1, E2
+- ,E3
+  )
+\end{lstlisting}
+dönüşümden önce \path{drivers/atm/firestream.c} dosyasındaki 1653. satır\\
+\begin{lstlisting}
+static void fs_poll (unsigned long data)
+{
+struct fs_dev *dev = (struct fs_dev *) data;
+fs_irq (0, dev, NULL);
+dev->timer.expires = jiffies + FS_POLL_FREQ;
+add_timer (&dev->timer);
+}
+\end{lstlisting}
+dönüşümden sonra \path{drivers/atm/firestream.c} dosyasındaki 1653.satır\\
+\begin{lstlisting}
+static void fs_poll (unsigned long data)
+{
+struct fs_dev *dev = (struct fs_dev *) data;
+fs_irq (0, dev);
+dev->timer.expires = jiffies + FS_POLL_FREQ;
+add_timer (&dev->timer);
+}
+\end{lstlisting}
+\end{document}

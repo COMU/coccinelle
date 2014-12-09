@@ -1,0 +1,74 @@
+\documentclass[22pt]{article}
+\usepackage[turkish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{multicol}
+\usepackage{listings}
+\setlength{\columnsep}{3cm}
+
+\begin{document}
+14 Alıştırmalar\\
+\\
+Bu bölümde bir dizi örnek sunuyor. Her bir örnek, uygulandığı bir C kodu ile birlikte sunulmaktadır. Kuralların tanımı ve eşleştirme işlemi açıklanır.\\
+\\
+14.1 Fonksiyonu Yeniden Adlandırma\\
+\\
+Coccinelle temel amaçlarından biri de yazılım evrimini yerine getirmektir. Örneğin, fonksiyonu yeniden adlandırmayı gerçekleştirmek için Coccinelle kullanılabilir. Aşağıdaki örnekte, her olayda çağırılan foo fonksiyonu, bar fonksiyonu olarak yeniden değiştirilir.\\
+
+\begin{multicols*}{3}
+				
+\begin{lstlisting}
+once
+#DEFINE TEST "foo"		
+
+print("foo");			
+
+int main(int i) {		
+//Test				
+  int k = foo();		
+
+  if(1) {			
+    foo();  			
+  } else {			
+    foo();			
+  }				
+
+  foo();			
+}
+\end{lstlisting}
+
+\columnbreak
+
+\begin{lstlisting}
+anlamsal yama		
+
+@@			
+
+@@			
+
+			
+-foo()			
++bar()
+\end{lstlisting}
+\columnbreak
+\begin{lstlisting}
+	sonra
+
+#DEFINE TEST "foo"
+
+print("foo");
+
+int main(int i) {
+//Test
+  int k = bar();
+
+  if(1) {
+    bar();
+  } else {
+    bar();	
+  }
+
+  bar();
+}
+\end{lstlisting}
+\end{multicols*}
+\end{document}
