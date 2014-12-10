@@ -1,0 +1,41 @@
+14.6 Düzenli İfadeler İle Beyan edilen ya da Yinelenen Tanımlayıcıları Filtreleme
+
+Tanımlayıcıları filtrelemek için regexp işlevselliği kullanan aşağıdaki SmPL dosyasını düşünürsek, foo ile başlayan ya da biten,
+
+@anyid@					@endsby@
+type t;					type t;
+identifier id;				identifier foo =~ ".*foo$";
+@@					@@
+t id () {...}				t foo () {...}
+
+@script:python@				@script:python@	
+x << anyid.id;				x << endsby.foo;
+@@					@@
+print "Identifier: %s" %x		print "Ends by foo: %s" %x
+
+@contains@				@beginsby@
+type t;					type t;
+identifier foo =~ ".*foo";		identifier foo =~ "^foo";
+@@					@@
+t foo() {...}				t foo () {...}
+ 
+@script:python@				@script:python@
+x << contains.foo;			x << beginsby.foo;
+@@					@@
+print "Contains foo: %s" %x		print "Begins by foo: %s" %x
+
+ve sol aşağıdaki C programında tanımlanan foo, bar, foobar, barfoobar fonksiyonlarından sağdaki sonuçları alırsınız.
+					
+						Identifier: foo
+						Identifier: bar
+						Identifier: foobar
+						Identifier: barfoobar
+int foo () { return 0; }			Identifier: barfoo
+int bar () { return 0; }			Contains foo: foo
+int foobar () { return 0; } 			Contains foo: foobar
+int barfoobar () { return 0; }			Contains foo: barfoobar
+int barfoo () { return 0; }			Contains foo: barfoo
+						Ends by foo: foo
+						Ends by foo: barfoo
+						Begins by foo: foo
+						Begins by foo: foobar
