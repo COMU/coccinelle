@@ -1,0 +1,76 @@
+\documentclass[22]{article}
+\usepackage[turkish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage[T1]{fontenc}
+\usepackage{tabto}
+\begin{document}
+14.5 Gönderim Sayacı: the \texttt{of\_xxx API}\\
+\\
+Coccinelle Python kodunu gömebilirsiniz. Python kodu açıklamalı özel SMPL kural içinde script:python ile kullanılır. Python kuralları diğer SMPL kuralları gibi tanımlayıcı veya belirteç pozisyonları gibi meta değişkenleri miras alır. Kalıtsal meta değişkenler sonra Python kodu tarafından ayarlanabilir. Aşağıdaki semantik eşleşme "\texttt{of\_find\_node\_by\_name}" işlevine bir çağrı yapar. Bu çağrının kaynağı serbest bırakmak için azaltmış olması gereken bir sayacı artırır. 
+Sonra, ne zaman "\texttt{of\_node\_put}" çağrısı yoksa, "\texttt{device\_node}" değişken "n" ve "return" ifadesi hiçbir yeni atamaya ulaşmadığında , hata tespit edildiğinde konuma "p1" ve "P2" ilk değeri verilir. Python konumlarımızı sadece  p1 ve p2 bağlı olduğu için, bu değerlendirilir. Aşağıdaki durumda, bazı Emacs Org modu veri üretilmektedir. Bu örnek, bir konum değişkeninde Python kodunun erişilebilinen çeşitli alanlarını göstermektedir.
+\begin{lstlisting}
+@ r exists @
+local idexpression struct device_node *n; 
+position p1, p2; 
+statement S1,S2;
+expression E,E1;
+@@
+(
+if (!(n@p1 = of_find_node_by_name(...))) S1
+|
+n@p1 = of_find_node_by_name(...)
+)
+<... when != of_node_put(n)
+     when != if (...) { <+... of_node_put(n) ...+> }
+     when != true !n || ... 
+     when != n = E 
+     when != E = n 
+if (!n || ...) S2
+...>
+(
+  return <+...n...+>;
+|
+return@p2 ...;
+|
+n = E1
+|
+E1 = n 
+)
+@ script:python @
+p1 << r.p1;
+p2 << r.p2;
+@@
+\end{lstlisting}
+13 ile 17. satırlar arasında "\texttt{of\_find\_node\_by\_name}" çağrısı ve bir hata görünmemesi gereken yapıların çeşitleri listelenmektedir. Örnekler \texttt{of\_node\_put}(13.) bir çağrı ve n null(15.) olup olmadığının bir koşullu testten sonra şube içine bir geçişi vardır. n NULL olup olmadığını test koşulları herhangi bir sayıda yuva kullanımını tarafından belirtildiği şekilde izin verilen <...... > \texttt{of\_find\_node\_by\_name} çağrısı arasındaki yolda dönüş ve desen koşullu satır 18 açıklamıştır.\\
+\\
+Daha önce semantik eşleşme aşağıdaki satırları oluşturmak için kullanılmıştır.Kod bir siteden diğerine gitmek için emacs Org modu kullanılarak düzenlenebilir.\\
+\\
+1 * TODO [[view:/linux next/arch/powerpc/platforms/pseries/setup.c::face=ovl-
+      \tab\tab{face1::linb=236::colb=18::cole=20][inc. counter:/linux-next/arch/powerpc/}
+      \tab\tab{platforms/pseries/setup.c::236]]}\\
+\\
+2 [[view:/linux-next/arch/powerpc/platforms/pseries/setup.c::face=ovl-face2::
+     \tab\tab{linb=250::colb=3::cole=9][return]]}\\
+\\
+3 * TODO [[view:/linux-next/arch/powerpc/platforms/pseries/setup.c::face=ovl-
+     \tab\tab{face1::linb=236::colb=18::cole=20][inc. counter:/linux-next/arch/powerpc/}
+     \tab\tab{platforms/pseries/setup.c::236]]}\\
+\\
+4 [[view:/linux-next/arch/powerpc/platforms/pseries/setup.c::face=ovl-face2::
+     \tab\tab{linb=245::colb=3::cole=9][return]]}\\
+\\
+Not: Coccinelle, yani "\texttt{cocci.print\_main, cocci.print\_sec" ve "cocci.print\_secs}" bazı önceden tanımlanmış Python fonksiyonları sağlar.Bir alternatif olarak yerine önceden sunulan  aşağıdaki SMPL kurallarından birini yazabilirsiniz.
+\\
+\begin{lstlisting}
+@ script:python @ 
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+cocci.print_main(p1)
+cocci.print_sec(p2,"return")
+\end{lstlisting}
+İşlev ! File ended while scanning use of \texttt{cocci.print\_secs} bir tek uyumlu olan birkaç konum olduğunda kullanılır.\\
+Her meta değişkeni Python kodu alabiliyordu.Ancak, erişilebilir alanlar şu anda eşit olarak aralarında desteklenmez.
+\end{document}
