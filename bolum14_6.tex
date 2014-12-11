@@ -1,0 +1,97 @@
+\documentclass[22pt]{article}
+\usepackage[turkish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{multicol}
+\usepackage{listings}
+\setlength{\columnsep}{3cm}
+\begin{document}
+14.6 Düzenli İfadeler İle Beyan edilen ya da Yinelenen Tanımlayıcıları Filtreleme
+\\
+Tanımlayıcıları filtrelemek için regexp işlevselliği kullanan aşağıdaki SmPL dosyasını düşünürsek, foo ile başlayan ya da biten,
+\\
+\begin{multicols*}{2}
+\begin{lstlisting}
+@anyid@
+type t;
+identifier id;                          
+@@                                      
+t id () {...}                           
+
+@script:python@                         
+x << anyid.id;                          
+@@                                      
+print "Identifier: %s" %x               
+
+@contains@                              
+type t;                                 
+identifier foo =~ ".*foo";              
+@@                                      
+t foo() {...}                           
+ 
+@script:python@                         
+x << contains.foo;                      
+@@                                      
+print "Contains foo: %s" %x
+\end{lstlisting}
+\columnbreak
+\begin{lstlisting}
+@endsby@
+type t;
+identifier foo =~ ".*foo$";
+@@
+t foo () {...}
+
+@script:python@ 
+x << endsby.foo;
+@@
+print "Ends by foo: %s" %x
+
+@beginsby@
+type t;
+        identifier foo =~ "^foo"; 
+@@
+t foo () {...}
+
+@script:python@
+x << beginsby.foo;
+@@
+print "Begins by foo: %s" %x
+\end{lstlisting}
+\end{multicols*}
+ve sol aşağıdaki C programında tanımlanan foo, bar, foobar, barfoobar fonksiyonlarından sağdaki sonuçları alırsınız.
+\\
+\begin{multicols*}{2}
+\begin{lstlisting}
+                                        
+
+
+                                        
+                                        
+int foo () { return 0; }                
+int bar () { return 0; }                
+int foobar () { return 0; }             
+int barfoobar () { return 0; }          
+int barfoo () { return 0; }             
+                                        
+                                        
+                                        
+                                        
+\end{lstlisting}
+\columnbreak
+\begin{lstlisting}
+Identifier: foo
+Identifier: bar
+Identifier: foobar
+Identifier: barfoobar
+Identifier: barfoo
+Contains foo: foo
+Contains foo: foobar
+Contains foo: barfoobar
+Contains foo: barfoo
+Ends by foo: foo
+Ends by foo: barfoo
+Begins by foo: foo
+Begins by foo: foobar
+\end{lstlisting}
+\end{multicols*}
+\end{document}
