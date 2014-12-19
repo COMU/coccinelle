@@ -1,0 +1,49 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[a4paper,left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{listings}
+\usepackage{ucs}
+\begin{document}
+\textbf{9 Ifadeler}
+\\
+İc ice koymak  veya uc nokta, bazı şartlı ifadelere izin verir ve digerlerinin belirsizligine neden olur. Orneğin ...expr... dizininde, nonterminaller expr örneklerinde açık c dili ile ifade edilmelidir, bir dizi referansta ise, expr 1 [ expr 2 ], nonterminal expr2 dir.
+Çünkü parantez tarafından ayrılmıştır, aynı zamanda "..."(üç nokta) örneği de olabilir, rasgele bir ifadeyi temsil eder. 
+Çeşitli olasılıklar arasında ayrım yapmak için ifadeleri üç nonteminalleri ile tanımlarız: "expr", üst düzey iç içe koyma veya üç nokta ya izin vermez,"nest\_expr" bir iç içe koymaya değil, üç nokta izin verir ve "dot\_expr" ikisine de izin verir. 
+EXPR makro bir şekilde bu türevleri ifade etmek için kullanılır.
+\begin{lstlisting}
+		expr       ::= EXPR(expr)
+		nest_expr  ::= EXPR(nest_expr)
+			     | NEST(nest_expr,exp_whencode)
+		dot_expr   ::= EXPR(dot_expr)
+			     | NEST(dot_expr, exp_whencode)
+			     | ... [exp_whencode]
+		EXPR(exp)  ::= exp assign_op exp
+			     | exp++
+			     | exp-
+			     | unary_op exp
+			     | exp bin_op exp
+			     | exp ? dot_expr : exp
+			     | (type) exp
+			     | exp [dot_expr]
+			     | exp . id
+			     | exp -> id
+			     | exp([PARAMSEQ(arg, exp_whencode)])
+			     | id
+			     | (type) { COMMA_LIST(init_list_elem) }
+			     | metaid^Exp
+			     | metaid^Const
+			     | const
+			     | (dot_expr)
+			     | OR(exp)
+	        arg        ::= nest_expr
+			     | metaid^ExpList
+	      exp_whencode ::= when != expr
+		assign_op  ::= = | -= | += | *= | /= | %=
+			     | &= | |= | ˆ= | <<= | >>=
+		bin_op     ::= * | / | % | + | -
+			     | <<| >>| ˆ | & | |
+			     | < | > | <= | >= | == | != | && | ||
+		unary_op   ::= ++ | - | & | * | + | - | !
+\end{lstlisting}
+\end{document}
