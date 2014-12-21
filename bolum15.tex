@@ -1,0 +1,29 @@
+\documentclass[22pt]{article}
+\usepackage[turkish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper,left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{listings}
+\begin{document}
+\textbf{15 İpuçları ve hileler}\\
+\\
+Eğer bir fonksiyon çağrısı ile bir işaretçi değerinin herhangi bir erişimini yeniden yazmak istiyorsanız, aşagıdaki anlamsal yamayı kullanabilirsiniz.
+\begin{lstlisting}
+1 - a = *b
+2 + a = readb(b)
+\end{lstlisting}
+Ancak, bazı nedenlerden dolayı kodunuz "bar=*(foo)" benziyorsa,  "bar=readb((foo))" sona erdirecekseniz, "foo" etrafında ekstra parantezi meta değer "b" ile yakalayabilirsiniz. İyi çıkış kodu üretmek için aşağıdaki anlamsal yamayı kullanabilirsiniz.
+\begin{lstlisting}
+1 - a = *(b)
+2 + a = readb(b)
+\end{lstlisting}
+Ve güvenilir standart .iso izomorfizm dosyaları içermelidir:
+\begin{lstlisting}
+1 Expression
+2 @ paren @
+3 expression E;
+4 @@
+5
+6 (E) => E
+\end{lstlisting}
+"bar = *(foo)" ve "bar = *foo "  concinelle eşdeğer kabul eder ve her ikisi de yakalayacaktır. Son olarak, "bar = ready(for)" beklendiği gibi oluşturur.
+\end{document}
