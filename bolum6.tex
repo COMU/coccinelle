@@ -1,0 +1,66 @@
+\documentclass{article}
+\usepackage[a4paper,left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{listings}
+
+\begin{document}
+\textbf{6 Fonksiyon Bildirimleri}
+\begin{lstlisting}
+        fundecl ::= [fn_ctype] funinfo ∗ funid ([PARAMSEQ(param, ε)]) { [stmt_seq] }
+        funproto ::= [fn_ctype] funinfo ∗ funid ([PARAMSEQ(param, ε)]);
+        funinfo ::= inline
+                  | storage
+        storage ::= static
+                  | auto
+                  | register
+                  | extern
+        funid   ::= id
+                  | metaid Id
+                  | OR(stmt)
+        param   ::= type id
+                  | metaid Param
+                  | metaid ParamList
+        decl    ::= ctype id
+                  | fn_ctype (* id) (PARAMSEQ(name_opt_decl, ε))
+                  | void
+                  | metaid Param
+
+              PARAMSEQ(gram_p, when_p) ::= COMMA_LIST(gram_p | ...[when_p])
+\end{lstlisting}
+
+Bir fonksiyon ile eşleştirmek için fonksiyon isminden önce görünen tüm açıklamaları sağlaması gerekli değildir. Örneğin, aşağıdaki anlamsal yama:
+\\
+\begin{lstlisting}
+1 @@
+2 @@
+3
+4 foo() { ... }
+\end{lstlisting}
+fonksiyon bildirimi aşağıdaki gibi eşleşir:
+
+\begin{lstlisting}
+1 static int foo() { return 12; }
+\end{lstlisting}
+
+Bu davranış  "optional\_storage" izomorfizm devre dışı bırakarak kapatılabilir. Eğer biri fonksiyon bildiriminden önce kodu eklerse,etkisi eklenmiş kod türüne bağlıdır.Eklenen kod, bir fonksiyon tanımı veya CPP kodu ise ,fonksiyon tanımı önceki herhangi bir yorum dahil olmak üzere fonksiyon tanımı ile ilgili tüm bilgileri, yeni kodun önüne yerleştirilir.Diğer taraftan,yeni kod fonksiyon ile ilişkiliyse, ek "static" anahtar kelimesi gibi,yeni kod anlamsal yama fonksiyon tanımının geri kalanı ile ilgili göründüğü yere konulur. Örneğin,
+
+\begin{lstlisting}
+1 @@
+2 type T;
+3 @@
+4 + static
+5 T foo() { ... }
+\end{lstlisting}
+
+"static" hemen fonksiyon adının öncesine yerleştirilmesine neden olur.Aşağıdakiler sadece tipi öncesine yerleştirilmesine neden olur
+\begin{lstlisting}
+1 @@
+2 type T;
+3 @@
+4 + static
+5 T foo() { ... }
+\end{lstlisting}
+
+Bu eklenen ode doğru pozisyonda yerleştirilir olmasını sağlamak için birçok durumu dikkate almak gerekli olabilir. Örneğin, ihtiyaç olabilecek şeyleri göz önüne alırsak "inline" bildirilmiş fonksiyondur ve diğer ihtiyaç olarak bir şey yoktur.\\
+\\
+C derleyici hiçbir dönüş türüne sahip olmayan fonksiyonlara izin verir ve dönüş türünün "int" olduğunu varsayar. Bu tür fonksiyonların derleyici desteği sınırlıdır. Özellikle, parametre listesi her bir parametre için bir tür içermelidir ve varargs içermeyebilir.
+\end{document}
