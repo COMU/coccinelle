@@ -1,0 +1,39 @@
+\documentclass[a4paper,22pt, right=5cm]{article}
+\usepackage[turkish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\begin{document}
+\textbf{7 Bildirimler}\\
+\\
+\begin{lstlisting}[mathescape]
+decl_var       ::= common_decl
+	         | [storage] ctype COMMA_LIST(d_indent) ;
+	         | [storage] [const_vol] id COMMA_LIST(d_indent) ;
+	         | [storage] fn_ctype ( * d_indent) (PARAMSEQ(name_opt_decl, $\epsilon$) ) = initialize ;
+	         | typedef ctype typedef_ident ;
+one_decl       ::= common_decl
+	         | [storage] ctype id;
+	         | [storage] [const_vol] id d_ident ;
+common_decl    ::= ctype;
+	         | funproto
+	         | [storage] ctype d_indent = initialize ;
+	         | [storage] [const_vol] id d_ident = initialize ;
+	         | [storage] fn_ctype ( * d_indent) (PARAMSEQ(name_opt_decl, $\epsilon$) ) ;
+initialize     ::= dot_expr
+	         | metaid^Initialiser
+	         | { [COMMA_LIST(init_list_elem)] }
+
+init_list_elem ::= dot_expr
+	         | designator = initialize
+		 | metaid^Initialiser
+		 | metaid^InitialiserList
+		 | id : dot_expr
+designator     ::= . id
+		 | [ dot_expr ]
+		 | [ dot_expr ... dot_expr ]
+decl_ident     ::= Declarerld
+		 | metaid^Declarer
+\end{lstlisting}
+Bir başlatıcı, bir yapı için düzenli ya da düzensiz olabilir. En az bir anahtar-değer çifti başlatıcısı varsa sırasız olduğu düşünülmektedir, örneğin .x = e.
+Bir bildirim örneği, register x; şeklinde olabilir. Bu durumda, dolaylı değişken int türündedir ve SmPL kodu int değişkenlerin bildirimi gibi eşleyecektir. Diğer taraftan, örtülü int türü konuma sahip değildir. SmPL kodu Konum tipini kaydetmeye çalışırsa, eşleşme başarısız olur.
+\end{document}
