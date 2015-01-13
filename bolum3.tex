@@ -1,0 +1,38 @@
+\documentclass[a4paper,20pt, right=2cm]{article}
+\usepackage[turkish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[cm]{fullpage}
+\usepackage{listings}
+\usepackage{url}
+\begin{document}
+\textbf{3 Betikler için metadeğişkenler}\\
+\\
+Betikler için metadeğişkenler sadece dönüşüm kuralları tarafından miras olabilir. Python gibi özünde betik dilleri kullananlar dinamik yazım kullanır, betikler için metadeğişkenleri bildirim tiplerini kapsamamaktadır.
+\begin{lstlisting}[basicstyle=\small]
+script_metavariable ::= @ script:language [rulename] [depends on dep] @ script_metadecl* @@
+		       | @ initialize:language [depends on dep] @ script_virt_metadecl* @@
+		       | @ finalize:language [depends on dep] @ script_virt_metadecl* @@
+language	     ::= python
+		       | ocalm
+script_metadecl      ::= id << rulename_id.id ;
+		       | id ;
+script_virt_metadecl ::= id << virtual.id ;
+\end{lstlisting}
+Halen, desteklenen betik dilleri sadece  Python ve OCaml vardır, belirtilen kullanım sırasıyla Python ve Ocalm'dır. Geçerli betik dilleri kümesi bazı noktalarda genişletilebilir.\\ 
+\\
+Betik kuralları "initialize" ile tanımlandığında herhangibir dosya işlem görmeden önce çalıştırılır."finalize" ile tanımlandığında tüm dosyaların işlemi tamamlandıktan sonra çalıştırılır. Her betik dili başına en fazla bir tane olabilir. (böylece mevcut durumda her birinden en az bir tane) SmPL metadeğişkenleri için "initialize" ve "finalize" betik kuralları erişimi yoktur. Yine de bir "finalize" betik kuralına diğer betik kuralları tarafından herhangibir değişken başlatılarak erişilebilir.\\
+\\    
+"initialize" ve "finalize" kurallarının herzamanki sözdizimini kullanılarak sanal değişkenlere erişimi vardır. Diğer betik kurallarına gelirsek, bazı gerekli sanal metadeğişkenler(aslında yoktur) bağlı değilse çalışmazlar. Ocalm, bu durumda bir uyarı yazdırır. Örnek demos/initvirt.cocci dosyasında buluyor.\\
+\\
+Başnoktası belirtilmeyen bir metadeğişken betiği, << kullanılarak, betik tarafından yeni olarak tanımlanır. Bu metadeğişken bir dizgeye(string) tahsis edilmelidir ve bir tanımlayıcı olarak sonradan gelen kuralla miras olabilir. Python'da, bir x metadeğişkeni tahsis edildiğinde metadeğişkene coccinelle.x şeklinde başvurulmalıdır. demos/pythontococci.cocci ve demos/camltococci.cocci dosyalarında örnekler vardır.\\
+\\
+Bir Ocalm betiğinde, script\_metadecl genişletilmiş biçimi kullanılabilir.
+\begin{lstlisting}
+    	script_mtadecl ::= (id, id) << rulename_id.id ;
+			| id << rulename_id.id ;
+			| id ;
+\end{lstlisting}
+(id,id) << rulename\_id.id şeklinde bir bildirimde; sağ bileşeni soyut sözdizimi ağacı alırken miras metadeğişken değeri sol bileşenin (id,id)  bir dizge temsilini alır. \path{parsing_c/ast_c.ml} dosyasındaki Coccinelle uygulamasında soyut sözdizimi ağacının yapısı hakkında bazı bilgiler verir. Sağ ya da sol bileşen, istenilen belirtilmediğinde sırasıyla dizge temsili ya da soyut sözdizimi ağacları \_ ile değiştirilebilir.
+Soyut sözdizimi ağacında tanımlı bir metadeğişkene, "metavariable" kullanılarak erişilemez.
+\end{document}
