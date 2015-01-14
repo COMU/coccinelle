@@ -1,0 +1,35 @@
+\documentclass[a4paper,20pt, right=2cm]{article}
+\usepackage[turkish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[cm]{fullpage}
+\usepackage{listings}
+\begin{document}
+\textbf{13 Yineleme}\\
+\\
+Bir sonraki yineleme sanal kuralları veya sanal tanımlayıcı bağlamalarının farklı bir kümesi verilerek, Coccinelle de yineleme yapmak mümkündür. demos/iteration.cocci 'de bir örneği bulunmaktadır. Örnek aşağıdaki gibidir:
+\begin{lstlisting}
+	virtual after_start
+
+	@initialize:ocaml@
+
+	let tbl = Hashtbl.create(100)
+
+	let add_if_not_present from f file =
+	try let _ = Hashtbl.find tbl (f,file) in ()
+	with Not_found ->
+	    Hashtbl.add tbl (f,file) file;
+	    let it = new iteration() in
+	    (match file with
+	        Some fl -> it#set_files [fl]
+	    | None -> ());
+	    it#add_virtual_rule After_start;
+	    it#add_virtual_identifier Err_ptr_function f;
+	    it#register()
+\end{lstlisting}
+after\_start sanal kuralı ilk yinelemeyi (burada eşleşme kabul edilmez) diğerlerinden ayırt etmek için kullanılır. This is done by not mentioning after\_start in the command line, ama her yinelemede eklenir.\\
+\\
+"new iteration" ve "register" satırları arasında bulunan "add\_if\_not\_present" fonksiyonu ana kod için çalışan yinelemedir. "new iteration" yeni bir yinelemeyi temsil eden bir yapı oluşturur. "set\_files" yeni yineleme üzerinde dikkate alınması gereken dosyaların listesini belirler. Eğer fonsiyon çağırılmazsa yeni yineleme o dosyalara o an ki güncel yinelemymiş gibi davranır. "add\_virtual\_rule A" yanına -D parametresi koyulduğunda da aynı etkiyi yaratacaktır. Bu başka bir yerde yapılmasa da kural adının büyük harfle başladığını unutmayın. "add\_virtual\_identifier X v" yanına -D x=v parametresi koyulduğunda da aynı etkiyi yaratacaktır. Durum değişikliği hakkında not, "extend\_virtual\_identifiers()" güncel yinelemenin "add\_virtual\_identifier" tarafından üzerien yazılmamış tüm sanal tanımlarını korur. Son olarak, "register" gelecekte bir zamanda yeni bir yinelemeyi tetiklemek için toplanan bilgileri kuyruğa sokar.\\
+\\
+Yineleme kullanılırken değişikliğe izin verilmez. Böylelikle anlamsal yama *s (anlamsal eşleme yerine bir anlamsal yama.) içermedikçe "-no-show-diff" kullanmayı gerektirir. Kodun geri kalanı üzerinde aynı bilginin birden fazla kez kuyruğa alınmadığından emin olmak için bir anahtarlı tablo(hash table) kullanır. Coccinelle'nin kendisi bunu desteklemez.\\
+\end{document}
