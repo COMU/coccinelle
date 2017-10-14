@@ -1,0 +1,78 @@
+14.3 Bir Makronun Tanıtımı
+
+  Kod kopyasını veya hataya eğilimli kodları önlemeyi, çekirdek BUG_ON,DIV_ROUND_UP ve FIELD_SIZE gibi makrolar sağlar.Bu durumlarda, anlamsal yamalar eski kod modelini arar ve onu yeni kodla değiştirir.Anlamsal bir yama, DIV_ROUND_UP makrosunun kullanımını tanıtmak için uygun ifadeyi arar.Örneğin (n+d-)/d.Bazı kodlar eşleştirildiğinde, meta değişkenler n ve b, onların uygun ifadelerine bağlıdırlar.Son olarak Coccinelle, n ve d'ye bağlı değerleri kullanarak,kodu aşağıdaki yamada gösterildiği gibi DIV_ROUND_UP ile yeniden yazar.
+
+	DIV_ROUND_UP makro kullanımını tanıtan anlamsal yama
+	    
+	  
+                @ haskernel @
+		@@
+
+		#include <linux/kernel.h>
+
+		@ depends on haskernel @
+		expression n,d;
+		@@
+
+		(
+		- (((n) + (d)) - 1) / (d))
+		+ DIV_ROUND_UP(n,d)
+		|
+		- (((n) + ((d) - 1)) / (d))
+		+ DIV_ROUND_UP(n,d)
+		)
+
+	   	               Üretilmiş Yama Örneği
+
+	--- a/drivers/atm/horizon.c
+	+++ b/drivers/atm/horizon.c
+	@@ -698,7 +698,7 @@ got_it:
+			if (bits)
+				*bits = (div<<CLOCK_SELECT_SHIFT) | (pre-1);
+			if (actual) {
+	-			*actual = (br + (pre<<div) - 1) / (pre<<div);
+	+			*actual = DIV_ROUND_UP(br, pre<<div);
+				PRINTD (DBG_QOS, "actual rate: %u", *actual);
+			}
+			return 0;
+
+
+
+   BUG_ON makrosu bir ifadenin değeri hakkında bildirim ortaya koyar.Ama hata ayıklama istenmediğinde, bildirim ile ifade edilen fonksiyonel bir çağrının durumu olarak yan etkilere sahip olabilidiğinde çekirdeğin bazı kısımları belirsiz durum olmak için BUG_ON'u tanımladığından dolayı onarım yapılmalıdır.Böylece bildirim ifadesi sadece fonksiyonel bir çağrı uygulamadığı durumda BUG_ON'u tanıtarak bir kural oluştururuz.
+   Fonksiyonel bir çağrının formuna sahip olan kodun özel bir parçası, derleyiciyi özel bir ifadenin doğru olamayacağı konusunda bilgilendiren olasılıksızlığın kullanımıdır.Bu durumda olasılıksız hiçbir yan etki göstermediğinden dolayı BUG_ON kullanmak güvenlidir.İkinci kural bu durumu sağlar.Bu bir çağrıyı beklenmedik bir şekilde değişkeniyle değiştirmesini sağlayan eşyapılılığı etkisizleştirir.Daha sonra ikinci kural ilki ile aynı olur.
+
+	@@
+	expression E,f;
+	@@
+
+	(
+	  if (<+... f(...) ...+>) { BUG(); }
+	|
+	- if (E) { BUG(); }
+	+ BUG_ON(E);
+	)
+
+	@ disable unlikely @
+	expression E,f;
+	@@
+
+	(
+	  if (<+... f(...) ...+>) { BUG(); }
+	|
+	- if (unlikely(E)) { BUG(); }
+	+ BUG_ON(E);
+	)
+	
+	Örneğin yukarıdaki anlamsal yama kullanılarak, Coccinelle aşağıdaki gibi yamalar oluşturur.
+	--- a/fs/ext3/balloc.c
+	+++ b/fs/ext3/balloc.c
+	@@ -232,8 +232,7 @@ restart:
+			prev = rsv;
+		}	
+		printk("Window map complete.\n");
+	-	if (bad)
+	-		BUG();
+	+	BUG_ON(bad);
+	}
+	#define rsv_window_dump(root, verbose) \
+		__rsv_window_dump((root), (verbose), __FUNCTION__)
